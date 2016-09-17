@@ -1,0 +1,4 @@
+*.vmdk
+packer-windows-2012-r2/output-vmware-iso/
+packer-windows-2012-r2/software/
+*.box
