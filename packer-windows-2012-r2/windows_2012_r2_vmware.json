@@ -1,0 +1,71 @@
+{
+  "builders": [
+  {
+      "type": "vmware-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "headless": false,
+      "boot_wait": "2m",
+	  "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "24h",
+	  "shutdown_timeout": "10m",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "windows8srv-64",
+      "tools_upload_flavor": "windows",
+      "disk_size": 61440,
+      "floppy_files": [
+        "{{user `autounattend`}}",
+		"./scripts/Add_modules.ps1",
+		"./scripts/Config_Execution_Policy.ps1",
+		"./scripts/Config_Vagrant_Environment.ps1",
+		"./scripts/Config_Winrm.ps1",
+		"./scripts/Install_Windows_Updates.ps1",
+		"./modules/PSWindowsUpdate.zip"
+      ],
+      "vmx_data": {
+        "memsize": "2048",
+        "numvcpus": "2",
+        "scsi0.virtualDev": "lsisas1068"
+      }
+    }
+  ],
+  "provisioners": [
+  	{
+	"type": "file",
+	"source": "./software",
+	"destination": "C:/Windows/Temp/software"
+	},
+	{
+	"type": "file",
+	"source": "./scripts/Autounattend.xml",
+	"destination": "C:/Windows/system32/sysprep/Autounattend.xml"
+	},
+    {
+    "type": "powershell",
+    "remote_path": "C:/Windows/Temp/script.ps1",
+    "scripts": [
+		"./scripts/Vm_Guest_Tools.ps1",
+		"./scripts/Install_PowerShellv5.ps1",
+		"./scripts/Set_TimeZone.ps1",
+		"./scripts/Install_Chef.ps1"
+      ]
+    }
+  ],  
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": true,
+      "output": "windows_2012_r2_{{.Provider}}.box",
+      "vagrantfile_template": "vagrantfile-windows_2012_r2.template"
+    }
+  ],
+  "variables": {
+    "iso_url": "http://download.microsoft.com/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.ISO",
+    "iso_checksum_type": "md5",
+    "iso_checksum": "458ff91f8abc21b75cb544744bf92e6a",
+    "autounattend": "./answer_files/2012_r2/Autounattend.xml"
+  }
+}
