@@ -1,5 +1,12 @@
 *.vmdk
-packer-windows-2012-r2/output-vmware-iso/
-packer-windows-2012-r2/software/
-packer-windows-2012-r2/packer_cache/
 *.box
+*.boxbak
+*.iso
+*.exe
+*.zip
+packer-windows-2012-r2/software/
+packer-windows-2012-r2/output-vmware-iso/
+packer-windows-2012-r2/packer_cache/
+packer-windows-10/software/
+packer-windows-10/output-vmware-iso
+packer-windows-10/packer_cache/
